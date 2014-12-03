@@ -63,25 +63,25 @@ class Stream
 		@similarArtists = []
 		@id = moment().unix()
 
-		self.startStream()
-
 		@isStartAddTracksLoop = false
 		@isStartAddVideosLoop = false
 
-		# req.getSimilarArtist @artistName, @artistId, (artists)->
-		# 	self.similarArtists = artists
+		self.startStream()
 
-		# 	clog artists
-
-		# 	self.startStream()
-
+		@firstRequestDelay = 6000
 
 
 
 #----------- public API --------------
-	popTracks: ->
+	popTracks: (num)->
 		clog "popTracks"
-		#playlistの数が一定に満たない時はfastPlaylistからランダムに渡してく	
+		#playlistの数が一定に満たない時はfastPlaylistからランダムに渡してく
+		if !num or num <= 0
+			returnTracks = @playlist.concat()
+			@playlist = []
+			return returnTracks
+
+
 
 
 	stop: ->
@@ -154,8 +154,8 @@ class Stream
 
 	addTracks: (limit, callback)->
 		clog "get top tracks #{limit} ..."
-		similarArtist = randomPick @similarArtists
-		req.getTopTrack similarArtist.name, similarArtist.mbid, limit, (tracks)=>
+		artist = randomPick @similarArtists
+		req.getTopTrack artist.name, artist.mbid, limit, (tracks)=>
 			#debug
 			unless tracks
 				console.error "tracks is undifined!"
@@ -169,10 +169,14 @@ class Stream
 
 	addVideo: ->
 			track = randomPick @uncheckedTracks
-			clog "getVideo ... (" + track.artist.name + " / " + track.name + ")"
+
+			artistName = track.artist.name
+			trackName = track.name
+			keyword = artistName + " " + trackName
+
+			clog "getVideo ... (" + artistName + " / " + trackName + ")"
 
 			#ここでYouTube検索をする。
-			keyword = track.artist.name + " " + track.name
 			#TODO 1でいのかな？　3くらいにしといて、キーワードチェックすべき？	
 			req.searchVideo keyword, 1, (videos)=>
 				video = videos[0]
@@ -193,14 +197,24 @@ class Stream
 					#できればここでplaytestをする → 終わったやつから足してく
 					# @uncheckedVideos.push video
 
-					#できればここでアーティスト情報を追加
+					newTrack =
+						artist_name: artistName
+						track_name: trackName
+						youtube_id: id
 
-					#ここで必要な情報だけのオブジェクトにする
+					if track.image
+						if track.image[0]
+							newTrack.image_url = track.image[0]['#text']
 
 					#いまはとりあえず playlistに足す
+					clog " # # # added ! (#{@playlist.length}) # # #   " + id + "   " + title
+					@playlist.push newTrack
 
-					clog " # # # added ! # # #   " + id + "   " + title
-					@playlist.push video
+					#やる？通信的に余裕があればやるか？
+					#アーティストbioをここでリクエストして追加
+					# setTimeout (=>
+					#	appendBio(newTrack)
+					# ), 1000
 
 
 

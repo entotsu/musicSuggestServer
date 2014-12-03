@@ -47,13 +47,20 @@
       this.playlist = [];
       this.similarArtists = [];
       this.id = moment().unix();
-      self.startStream();
       this.isStartAddTracksLoop = false;
       this.isStartAddVideosLoop = false;
+      self.startStream();
+      this.firstRequestDelay = 6000;
     }
 
-    Stream.prototype.popTracks = function() {
-      return clog("popTracks");
+    Stream.prototype.popTracks = function(num) {
+      var returnTracks;
+      clog("popTracks");
+      if (!num || num <= 0) {
+        returnTracks = this.playlist.concat();
+        this.playlist = [];
+        return returnTracks;
+      }
     };
 
     Stream.prototype.stop = function() {
@@ -133,10 +140,10 @@
     };
 
     Stream.prototype.addTracks = function(limit, callback) {
-      var similarArtist;
+      var artist;
       clog("get top tracks " + limit + " ...");
-      similarArtist = randomPick(this.similarArtists);
-      return req.getTopTrack(similarArtist.name, similarArtist.mbid, limit, (function(_this) {
+      artist = randomPick(this.similarArtists);
+      return req.getTopTrack(artist.name, artist.mbid, limit, (function(_this) {
         return function(tracks) {
           if (!tracks) {
             console.error("tracks is undifined!");
@@ -154,13 +161,15 @@
     };
 
     Stream.prototype.addVideo = function() {
-      var keyword, track;
+      var artistName, keyword, track, trackName;
       track = randomPick(this.uncheckedTracks);
-      clog("getVideo ... (" + track.artist.name + " / " + track.name + ")");
-      keyword = track.artist.name + " " + track.name;
+      artistName = track.artist.name;
+      trackName = track.name;
+      keyword = artistName + " " + trackName;
+      clog("getVideo ... (" + artistName + " / " + trackName + ")");
       return req.searchVideo(keyword, 1, (function(_this) {
         return function(videos) {
-          var id, ng_word, title, video, _i, _len;
+          var id, newTrack, ng_word, title, video, _i, _len;
           video = videos[0];
           if (!video) {
             return console.error("video is undifined!!!!");
@@ -174,8 +183,18 @@
                 return false;
               }
             }
-            clog(" # # # added ! # # #   " + id + "   " + title);
-            return _this.playlist.push(video);
+            newTrack = {
+              artist_name: artistName,
+              track_name: trackName,
+              youtube_id: id
+            };
+            if (track.image) {
+              if (track.image[0]) {
+                newTrack.image_url = track.image[0]['#text'];
+              }
+            }
+            clog((" # # # added ! (" + _this.playlist.length + ") # # #   ") + id + "   " + title);
+            return _this.playlist.push(newTrack);
           }
         };
       })(this));

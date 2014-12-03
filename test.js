@@ -12,4 +12,11 @@
 
   stream4 = new Stream("80kidz");
 
+  setTimeout(((function(_this) {
+    return function() {
+      var newTracks;
+      return newTracks = stream4.popTracks();
+    };
+  })(this)), stream4.firstRequestDelay);
+
 }).call(this);

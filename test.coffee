@@ -18,6 +18,12 @@ Stream = require "./stream.js"
 # stream2.popTracks()
 
 stream4 = new Stream "80kidz"
+
+setTimeout (=>
+	newTracks = stream4.popTracks()
+), stream4.firstRequestDelay
+
+
 # stream3 = new Stream "岩崎愛"
 
 

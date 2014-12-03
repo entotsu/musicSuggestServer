@@ -21,18 +21,21 @@
 
   addTracksLoopInterval = function(tracks_num) {
     var delay;
-    delay = tracks_num * 1000 + 1000;
-    console.log("wait for adding top track " + delay + "msec");
+    delay = tracks_num * tracks_num + 200;
+    clog(" ... + wait " + delay + "msec");
     return delay;
   };
 
-  addVideoLoopInterval = function() {
-    return 5000;
+  addVideoLoopInterval = function(playlist_length) {
+    var delay;
+    delay = playlist_length * playlist_length / 2;
+    clog(" ... # wait " + delay + "msec");
+    return delay;
   };
 
-  DEFAULT_LIMIT_OF_TOP_TRACK = 999;
+  DEFAULT_LIMIT_OF_TOP_TRACK = 15;
 
-  NG_WORDS = ["歌ってみ", "うたってみ", "カラオケ", "カバー", "cover", "コピー", "copy", "ピッチ", "弾いてみ", "ｺﾋﾟｰ", "メドレー", "ﾒﾄﾞﾚｰ", "BGM", "作業用"];
+  NG_WORDS = ["歌ってみ", "うたってみ", "カラオケ", "カバー", "cover", "コピー", "copy", "ピッチ", "弾いてみ", "ｺﾋﾟｰ", "メドレー", "ﾒﾄﾞﾚｰ", "BGM", "作業用", "Trailer", "トレーラー"];
 
   Stream = (function() {
     function Stream(artistName, artistId) {
@@ -47,6 +50,7 @@
       this.playlist = [];
       this.similarArtists = [];
       this.id = moment().unix();
+      this.sendNum = 0;
       this.isStartAddTracksLoop = false;
       this.isStartAddVideosLoop = false;
       self.startStream();
@@ -54,13 +58,16 @@
     }
 
     Stream.prototype.popTracks = function(num) {
-      var returnTracks;
-      clog("popTracks");
+      var sendTraks;
+      sendTraks = null;
       if (!num || num <= 0) {
-        returnTracks = this.playlist.concat();
-        this.playlist = [];
-        return returnTracks;
+        sendTraks = this.playlist.splice(0);
+      } else {
+        sendTraks = this.playlist.splice(0, num);
       }
+      this.sendNum += sendTraks.length;
+      clog("s" + this.sendNum + " p" + this.playlist.length + " t" + this.uncheckedTracks.length + " -> pop " + sendTraks.length + " tracks");
+      return sendTraks;
     };
 
     Stream.prototype.stop = function() {
@@ -116,13 +123,12 @@
       if (this.uncheckedTracks.length === 0) {
         return setTimeout(this.addVideoLoop, 1000);
       } else {
-        setTimeout(this.addVideoLoop, addVideoLoopInterval());
+        setTimeout(this.addVideoLoop, addVideoLoopInterval(this.playlist.length));
         return this.addVideo();
       }
     };
 
     Stream.prototype.addArtists = function(limit, callback) {
-      clog("get similar artists " + limit + " ...");
       return req.getSimilarArtist(this.artistName, this.artistId, limit, (function(_this) {
         return function(artists) {
           if (!artists) {
@@ -141,17 +147,27 @@
 
     Stream.prototype.addTracks = function(limit, callback) {
       var artist;
-      clog("get top tracks " + limit + " ...");
       artist = randomPick(this.similarArtists);
       return req.getTopTrack(artist.name, artist.mbid, limit, (function(_this) {
         return function(tracks) {
+          var aTrack, newTrackList, t, _i, _len;
           if (!tracks) {
             console.error("tracks is undifined!");
             return process.exit();
           } else {
-            _this.uncheckedTracks = _this.uncheckedTracks.concat(tracks);
-            clog("got " + tracks.length + " uncheckedTracks");
-            clog("current uncheckedTracks: " + _this.uncheckedTracks.length);
+            newTrackList = [];
+            for (_i = 0, _len = tracks.length; _i < _len; _i++) {
+              t = tracks[_i];
+              aTrack = {};
+              aTrack.artist_name = t.artist.name;
+              aTrack.track_name = t.name;
+              if (t.image && t.image[0]) {
+                aTrack.image_url = t.image[0]['#text'];
+              }
+              newTrackList.push(aTrack);
+            }
+            _this.uncheckedTracks = _this.uncheckedTracks.concat(newTrackList);
+            clog("s" + _this.sendNum + " p" + _this.playlist.length + " t" + _this.uncheckedTracks.length + "  + " + tracks.length + " tracks +++++++++++++++++++");
             if (callback) {
               return callback();
             }
@@ -161,43 +177,33 @@
     };
 
     Stream.prototype.addVideo = function() {
-      var artistName, keyword, track, trackName;
+      var keyword, track;
       track = randomPick(this.uncheckedTracks);
-      artistName = track.artist.name;
-      trackName = track.name;
-      keyword = artistName + " " + trackName;
-      clog("getVideo ... (" + artistName + " / " + trackName + ")");
-      return req.searchVideo(keyword, 1, (function(_this) {
-        return function(videos) {
-          var id, newTrack, ng_word, title, video, _i, _len;
-          video = videos[0];
-          if (!video) {
-            return console.error("video is undifined!!!!");
-          } else {
-            title = video.snippet.title;
-            id = video.id.videoId;
-            for (_i = 0, _len = NG_WORDS.length; _i < _len; _i++) {
-              ng_word = NG_WORDS[_i];
-              if (title.indexOf(ng_word) !== -1) {
-                clog("### BLOCK by NG WORD " + title + " " + ng_word);
-                return false;
+      if (track) {
+        keyword = track.artist_name + " " + track.track_name;
+        return req.searchVideo(keyword, 1, (function(_this) {
+          return function(videos) {
+            var id, ng_word, title, video, _i, _len;
+            video = videos[0];
+            if (!video) {
+              return console.error("video is undifined!!!!");
+            } else {
+              title = video.snippet.title;
+              id = video.id.videoId;
+              for (_i = 0, _len = NG_WORDS.length; _i < _len; _i++) {
+                ng_word = NG_WORDS[_i];
+                if (title.indexOf(ng_word) !== -1) {
+                  clog("### BLOCK by NG WORD " + title + " " + ng_word);
+                  return false;
+                }
               }
+              track.youtube_id = id;
+              _this.playlist.push(track);
+              return clog(("s" + _this.sendNum + " p" + _this.playlist.length + " t" + _this.uncheckedTracks.length + "  # added!　　") + id + "  " + title);
             }
-            newTrack = {
-              artist_name: artistName,
-              track_name: trackName,
-              youtube_id: id
-            };
-            if (track.image) {
-              if (track.image[0]) {
-                newTrack.image_url = track.image[0]['#text'];
-              }
-            }
-            clog((" # # # added ! (" + _this.playlist.length + ") # # #   ") + id + "   " + title);
-            return _this.playlist.push(newTrack);
-          }
-        };
-      })(this));
+          };
+        })(this));
+      }
     };
 
     Stream.prototype.playTest = function() {

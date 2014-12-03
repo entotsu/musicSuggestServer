@@ -7,24 +7,37 @@ clog "============= test.coffee ================="
 
 
 
+# arr = new Array("4", "11", "2", "10", "3", "1")
+# clog arr
+# removed = arr.splice 0
+# clog arr
+# clog removed
+
+
+
+
+getloop = (stream)->
+	setTimeout (=>
+
+		newTracks = stream.popTracks(10)
+		# str = ""
+		# str += " | " + t.track_name for t in newTracks
+		# clog str
+
+		getloop stream
+
+	), stream.firstRequestDelay
+
+
 Stream = require "./stream.js"
 
 # stream = new Stream "ELLEGARDEN"
-# stream.popTracks()
-
-
-
 # stream2 = new Stream "A-bee"
-# stream2.popTracks()
-
-stream4 = new Stream "80kidz"
-
-setTimeout (=>
-	newTracks = stream4.popTracks()
-), stream4.firstRequestDelay
-
-
 # stream3 = new Stream "岩崎愛"
+
+stream4 = new Stream "the band apart"
+getloop stream4
+
 
 
 

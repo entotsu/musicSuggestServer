@@ -1,5 +1,6 @@
 
-clog = (s) -> console.log s
+clog = (s) ->
+	console.log s
 clog "stream.coffee"
 
 
@@ -18,17 +19,19 @@ FIRST_TRACK_LIMIT = 5
 DELAY_OF_START_MAIN_LOOP = 5000
 
 addTracksLoopInterval = (tracks_num)->
-	delay = tracks_num * 1000 + 1000# TODO あとでもう少しちゃんと考える
-	console.log "wait for adding top track " + delay + "msec"
+	delay = tracks_num * tracks_num + 200# TODO あとでもう少しちゃんと考える
+	clog " ... + wait #{delay}msec"
 	return delay
 
 
 # TODO トラックの数に応じてリクエストの間隔をずらす	
-addVideoLoopInterval = ()->
-	return 5000
+addVideoLoopInterval = (playlist_length)->
+	delay = playlist_length * playlist_length / 2
+	clog " ... # wait #{delay}msec"
+	return delay
 
 
-DEFAULT_LIMIT_OF_TOP_TRACK = 999
+DEFAULT_LIMIT_OF_TOP_TRACK = 15
 
 #----------------------------------------------------------------
 
@@ -48,6 +51,8 @@ NG_WORDS = [
 	"ﾒﾄﾞﾚｰ"
 	"BGM"
 	"作業用"
+	"Trailer"
+	"トレーラー"
 	]
 
 
@@ -63,6 +68,8 @@ class Stream
 		@similarArtists = []
 		@id = moment().unix()
 
+		@sendNum = 0
+
 		@isStartAddTracksLoop = false
 		@isStartAddVideosLoop = false
 
@@ -74,12 +81,16 @@ class Stream
 
 #----------- public API --------------
 	popTracks: (num)->
-		clog "popTracks"
-		#playlistの数が一定に満たない時はfastPlaylistからランダムに渡してく
+		sendTraks = null
 		if !num or num <= 0
-			returnTracks = @playlist.concat()
-			@playlist = []
-			return returnTracks
+			sendTraks = @playlist.splice 0
+		else
+			sendTraks = @playlist.splice 0, num
+
+		@sendNum += sendTraks.length
+
+		clog "s#{@sendNum} p#{@playlist.length} t#{@uncheckedTracks.length} -> pop #{sendTraks.length} tracks"
+		return sendTraks
 
 
 
@@ -130,7 +141,7 @@ class Stream
 		if @uncheckedTracks.length is 0#最初のとき
 			setTimeout @addVideoLoop, 1000
 		else	
-			setTimeout @addVideoLoop, addVideoLoopInterval()
+			setTimeout @addVideoLoop, addVideoLoopInterval @playlist.length
 			@addVideo()
 
 
@@ -141,7 +152,7 @@ class Stream
 	
 
 	addArtists: (limit, callback)->
-		clog "get similar artists #{limit} ..."
+		# clog "get similar artists #{limit} ..."
 		req.getSimilarArtist @artistName, @artistId, limit, (artists)=>
 			unless artists
 				console.error "artists is undifined!"
@@ -153,7 +164,7 @@ class Stream
 
 
 	addTracks: (limit, callback)->
-		clog "get top tracks #{limit} ..."
+		# clog "get top tracks #{limit} ..."
 		artist = randomPick @similarArtists
 		req.getTopTrack artist.name, artist.mbid, limit, (tracks)=>
 			#debug
@@ -161,60 +172,53 @@ class Stream
 				console.error "tracks is undifined!"
 				process.exit()#debug!
 			else
-				@uncheckedTracks = @uncheckedTracks.concat tracks
-				clog "got #{tracks.length} uncheckedTracks"
-				clog "current uncheckedTracks: " + @uncheckedTracks.length
+
+				newTrackList = []
+				for t in tracks
+					aTrack = {}
+					aTrack.artist_name = t.artist.name
+					aTrack.track_name = t.name
+					aTrack.image_url = t.image[0]['#text'] if t.image and t.image[0]
+					newTrackList.push aTrack
+
+				@uncheckedTracks = @uncheckedTracks.concat newTrackList
+				clog "s#{@sendNum} p#{@playlist.length} t#{@uncheckedTracks.length}  + #{tracks.length} tracks +++++++++++++++++++"
 				if callback then callback()
 
 
 	addVideo: ->
 			track = randomPick @uncheckedTracks
+			if track
+				keyword = track.artist_name + " " + track.track_name
+				req.searchVideo keyword, 1, (videos)=>
+					video = videos[0]
 
-			artistName = track.artist.name
-			trackName = track.name
-			keyword = artistName + " " + trackName
+					unless video
+						console.error "video is undifined!!!!"
+					else
+						title = video.snippet.title
+						id = video.id.videoId
 
-			clog "getVideo ... (" + artistName + " / " + trackName + ")"
+						#タイトルでフィルタリング
+						for ng_word in NG_WORDS
+							if title.indexOf(ng_word) isnt -1
+								clog "### BLOCK by NG WORD #{title} #{ng_word}"
+								return false
 
-			#ここでYouTube検索をする。
-			#TODO 1でいのかな？　3くらいにしといて、キーワードチェックすべき？	
-			req.searchVideo keyword, 1, (videos)=>
-				video = videos[0]
+						#できればここでplaytestをする → 終わったやつから足してく
+						# @uncheckedVideos.push video
 
-				unless video
-					console.error "video is undifined!!!!"
-				else
+						track.youtube_id = id
 
-					title = video.snippet.title
-					id = video.id.videoId
+						#いまはとりあえず playlistに足す
+						@playlist.push track
+						clog "s#{@sendNum} p#{@playlist.length} t#{@uncheckedTracks.length}  # added!　　" + id + "  " + title
 
-					#タイトルでフィルタリング
-					for ng_word in NG_WORDS
-						if title.indexOf(ng_word) isnt -1
-							clog "### BLOCK by NG WORD #{title} #{ng_word}"
-							return false
-
-					#できればここでplaytestをする → 終わったやつから足してく
-					# @uncheckedVideos.push video
-
-					newTrack =
-						artist_name: artistName
-						track_name: trackName
-						youtube_id: id
-
-					if track.image
-						if track.image[0]
-							newTrack.image_url = track.image[0]['#text']
-
-					#いまはとりあえず playlistに足す
-					clog " # # # added ! (#{@playlist.length}) # # #   " + id + "   " + title
-					@playlist.push newTrack
-
-					#やる？通信的に余裕があればやるか？
-					#アーティストbioをここでリクエストして追加
-					# setTimeout (=>
-					#	appendBio(newTrack)
-					# ), 1000
+						#やる？通信的に余裕があればやるか？
+						#アーティストbioをここでリクエストして追加
+						# setTimeout (=>
+						#	appendBio(newTrack)
+						# ), 1000
 
 
 

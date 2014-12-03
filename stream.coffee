@@ -12,11 +12,14 @@ moment = require "moment"
 
 #------------------------- TUNING -------------------------------
 
-#最初に最速で一番近い50曲とる
-FIRST_ARTIST_LIMIT = 10
-FIRST_TRACK_LIMIT = 5
+#アプリが最初にとりにくるまでの時間
+FIRST_REQUEST_DELAY = 5000
 
-DELAY_OF_START_MAIN_LOOP = 5000
+#最初に最速で一番近い50曲とる
+FIRST_ARTIST_LIMIT = 4
+FIRST_TRACK_LIMIT = 2
+
+DELAY_OF_START_MAIN_LOOP = 50
 
 addTracksLoopInterval = (tracks_num)->
 	delay = tracks_num * tracks_num + 200# TODO あとでもう少しちゃんと考える
@@ -26,12 +29,13 @@ addTracksLoopInterval = (tracks_num)->
 
 # TODO トラックの数に応じてリクエストの間隔をずらす	
 addVideoLoopInterval = (playlist_length)->
-	delay = playlist_length * playlist_length / 2
+	delay = playlist_length * playlist_length / 5 + 100
 	clog " ... # wait #{delay}msec"
 	return delay
 
 
-DEFAULT_LIMIT_OF_TOP_TRACK = 15
+DEFAULT_LIMIT_OF_TOP_TRACK = 25
+
 
 #----------------------------------------------------------------
 
@@ -75,8 +79,13 @@ class Stream
 
 		self.startStream()
 
-		@firstRequestDelay = 6000
+		@firstRequestDelay = FIRST_REQUEST_DELAY
 
+		@tracksLoopTimer = null
+		@videoLoopTimer = null
+
+		@isExhaustedArtists = false
+		@isStop = false
 
 
 #----------- public API --------------
@@ -97,7 +106,9 @@ class Stream
 
 	stop: ->
 		clog "stop stream"
-
+		@isStop = true
+		clearTimeout @tracksLoopTimer
+		clearTimeout @videoLoopTimer
 
 
 
@@ -129,20 +140,24 @@ class Stream
 
 
 	addTracksLoop: =>
-		if @similarArtists.length is 0
-			clog "similarArtists is end."
-		else
-			setTimeout @addTracksLoop, addTracksLoopInterval @uncheckedTracks.length
-			@addTracks(DEFAULT_LIMIT_OF_TOP_TRACK)
+		unless @isStop
+			if @similarArtists.length is 0
+				clog "similarArtists is end."
+				@isExhaustedArtists = true
+			else
+				@tracksLoopTimer = setTimeout @addTracksLoop, addTracksLoopInterval @uncheckedTracks.length
+				@addTracks(DEFAULT_LIMIT_OF_TOP_TRACK)
 
 
 
 	addVideoLoop: =>
-		if @uncheckedTracks.length is 0#最初のとき
-			setTimeout @addVideoLoop, 1000
-		else	
-			setTimeout @addVideoLoop, addVideoLoopInterval @playlist.length
-			@addVideo()
+		unless @isStop
+			if @uncheckedTracks.length is 0#最初のとき
+				unless @isExhaustedArtists#もう検索する余地がないか、終わりか
+					setTimeout @addVideoLoop, 1000
+			else
+				@videoLoopTimer = setTimeout @addVideoLoop, addVideoLoopInterval @playlist.length
+				@addVideo()
 
 
 
@@ -158,8 +173,13 @@ class Stream
 				console.error "artists is undifined!"
 				process.exit()#debug!
 			else
-				@similarArtists = artists
-				clog "#{artists.length} artists is added!"
+				# @similarArtists = artists
+				for a in artists
+					newArtist = {}
+					newArtist.name = a.name
+					newArtist.id = a.mbid
+					@similarArtists.push newArtist
+				clog "+++++++++++++++++ #{@similarArtists.length} artists is added!"
 			if callback then callback()
 
 

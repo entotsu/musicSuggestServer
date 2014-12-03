@@ -15,29 +15,43 @@ clog "============= test.coffee ================="
 
 
 
+# Stream = require "./stream.js"
 
-getloop = (stream)->
-	setTimeout (=>
-
-		newTracks = stream.popTracks(10)
-		# str = ""
-		# str += " | " + t.track_name for t in newTracks
-		# clog str
-
-		getloop stream
-
-	), stream.firstRequestDelay
-
-
-Stream = require "./stream.js"
+# getloop = (stream)->
+# 	setTimeout (=>
+# 		newTracks = stream.popTracks(10)
+# 		getloop stream
+# 	), stream.firstRequestDelay + (10000 * Math.random())
 
 # stream = new Stream "ELLEGARDEN"
+# getloop stream
+
+
+
+# setTimeout =>
+# 	stream.stop()
+# 	setTimeout =>
+# 		stream = null
+# 	,1000
+# , 1000 * 40
+
 # stream2 = new Stream "A-bee"
+# getloop stream2
+
 # stream3 = new Stream "岩崎愛"
+# getloop stream3
 
-stream4 = new Stream "the band apart"
-getloop stream4
+# stream4 = new Stream "the band apart"
+# getloop stream4
 
+# stream5 = new Stream "AKB48"
+# getloop stream5
+
+# stream6 = new Stream "嵐"
+# getloop stream6
+
+# stream7 = new Stream "toe"
+# getloop stream7
 
 
 

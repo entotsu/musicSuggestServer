@@ -30,12 +30,12 @@
     var json, stream, tracks;
     console.log("getTracks");
     stream = streamList[id];
-    setStopTimeout(stream);
     if (!stream) {
       return {
         "error": "stream " + id + " is not found."
       };
     } else {
+      setStopTimeout(stream);
       tracks = stream.popTracks(limit);
       json = {
         tracks: tracks

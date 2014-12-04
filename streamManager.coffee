@@ -25,11 +25,11 @@ startNewStream = (artistName, artistId, mode)->
 getTracks = (id, limit)->
 	console.log "getTracks"
 	stream = streamList[id]
-	setStopTimeout stream
 
 	unless stream
 		return {"error":"stream #{id} is not found."}
 	else
+		setStopTimeout stream
 		tracks = stream.popTracks(limit)
 		json = {tracks:tracks}
 		return json

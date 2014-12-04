@@ -87,6 +87,8 @@ class Stream
 		@isExhaustedArtists = false
 		@isStop = false
 
+		@timeoutTimer = null
+
 
 #----------- public API --------------
 	popTracks: (num)->

@@ -61,6 +61,7 @@
       this.videoLoopTimer = null;
       this.isExhaustedArtists = false;
       this.isStop = false;
+      this.timeoutTimer = null;
     }
 
     Stream.prototype.popTracks = function(num) {

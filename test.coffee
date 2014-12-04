@@ -6,7 +6,7 @@ clog "============= test.coffee ================="
 
 
 
-server = require "./server.js"
+# server = require "./server.js"
 
 
 # manager = require "./streamManager.js"
@@ -41,31 +41,32 @@ server = require "./server.js"
 
 # arr = new Array("4", "11", "2", "10", "3", "1")
 # clog arr
-# removed = arr.splice 0
+# removed = arr.splice arr.length - 2, 2
 # clog arr
 # clog removed
 
 
 
-# Stream = require "./stream.js"
+Stream = require "./stream.js"
 
-# getloop = (stream)->
-# 	setTimeout (=>
-# 		newTracks = stream.popTracks(10)
-# 		getloop stream
-# 	), stream.firstRequestDelay + (10000 * Math.random())
+getloop = (stream)->
+	setTimeout (=>
+		newTracks = stream.popTracks(10)
+		console.log newTracks
+		getloop stream
+	), stream.firstRequestDelay + (10000 * Math.random())
 
-# stream = new Stream "ELLEGARDEN"
-# getloop stream
+stream = new Stream "ELLEGARDEN"
+getloop stream
 
 
 
-# setTimeout =>
-# 	stream.stop()
-# 	setTimeout =>
-# 		stream = null
-# 	,1000
-# , 1000 * 40
+setTimeout =>
+	stream.stop()
+	setTimeout =>
+		stream = null
+	,1000
+, 1000 * 40
 
 # stream2 = new Stream "A-bee"
 # getloop stream2

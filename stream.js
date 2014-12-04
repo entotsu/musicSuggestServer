@@ -70,7 +70,7 @@
       if (!num || num <= 0) {
         sendTraks = this.playlist.splice(0);
       } else {
-        sendTraks = this.playlist.splice(0, num);
+        sendTraks = this.playlist.splice(this.playlist.length - num, num);
       }
       this.sendNum += sendTraks.length;
       clog("" + this.id + " s" + this.sendNum + " p" + this.playlist.length + " t" + this.uncheckedTracks.length + " -> pop " + sendTraks.length + " tracks");

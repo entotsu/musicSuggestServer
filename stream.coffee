@@ -95,8 +95,8 @@ class Stream
 		sendTraks = null
 		if !num or num <= 0
 			sendTraks = @playlist.splice 0
-		else
-			sendTraks = @playlist.splice 0, num
+		else#後ろから取るようにした。もしアーティスト情報付与するなら前からとってこう	
+			sendTraks = @playlist.splice @playlist.length - num, num
 
 		@sendNum += sendTraks.length
 

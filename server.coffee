@@ -2,7 +2,7 @@
 # print "server.coffee"
 
 
-PORT_NUMBER = 60064
+PORT_NUMBER = 60049
 
 
 http = require "http"
@@ -60,7 +60,7 @@ onAccess = (req, res) ->
 
 
 server = http.createServer(onAccess).listen(PORT_NUMBER)
-console.log "server started"
+console.log "music suggest server is started at PORT " + PORT_NUMBER
 
 
 

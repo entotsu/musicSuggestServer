@@ -2,7 +2,7 @@
 (function() {
   var ERROR, PORT_NUMBER, http, manager, onAccess, returnError, server, url, writeJSON;
 
-  PORT_NUMBER = 60064;
+  PORT_NUMBER = 60049;
 
   http = require("http");
 
@@ -61,7 +61,7 @@
 
   server = http.createServer(onAccess).listen(PORT_NUMBER);
 
-  console.log("server started");
+  console.log("music suggest server is started at PORT " + PORT_NUMBER);
 
   writeJSON = function(res, obj) {
     res.writeHead(200, {

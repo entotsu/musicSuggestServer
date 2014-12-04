@@ -70,7 +70,7 @@ class Stream
 		@uncheckedVideos = []
 		@playlist = []
 		@similarArtists = []
-		@id = moment().unix()
+		@id = "s" + moment().unix().toString()
 
 		@sendNum = 0
 
@@ -98,7 +98,7 @@ class Stream
 
 		@sendNum += sendTraks.length
 
-		clog "s#{@sendNum} p#{@playlist.length} t#{@uncheckedTracks.length} -> pop #{sendTraks.length} tracks"
+		clog "#{@id} s#{@sendNum} p#{@playlist.length} t#{@uncheckedTracks.length} -> pop #{sendTraks.length} tracks"
 		return sendTraks
 
 
@@ -202,7 +202,7 @@ class Stream
 					newTrackList.push aTrack
 
 				@uncheckedTracks = @uncheckedTracks.concat newTrackList
-				clog "s#{@sendNum} p#{@playlist.length} t#{@uncheckedTracks.length}  + #{tracks.length} tracks +++++++++++++++++++"
+				clog "#{@id} s#{@sendNum} p#{@playlist.length} t#{@uncheckedTracks.length}  + #{tracks.length} tracks +++++++++++++++++++"
 				if callback then callback()
 
 
@@ -232,7 +232,7 @@ class Stream
 
 						#いまはとりあえず playlistに足す
 						@playlist.push track
-						clog "s#{@sendNum} p#{@playlist.length} t#{@uncheckedTracks.length}  # added!　　" + id + "  " + title
+						clog "#{@id} s#{@sendNum} p#{@playlist.length} t#{@uncheckedTracks.length}  # added!　　" + id + "  " + title
 
 						#やる？通信的に余裕があればやるか？
 						#アーティストbioをここでリクエストして追加
@@ -263,72 +263,4 @@ randomPick = (ary)->
 
 
 module.exports = Stream
-
-
-
-#-------------------------------------------------------------------------------------------------------------------------
-`
-var testArtists =
-	[ { name: 'the HIATUS',
-    mbid: '03a457ae-2307-4e7f-bc99-ae48316a214f',
-    match: '1',
-    url: 'www.last.fm/music/the+HIATUS',
-    image: [ [Object], [Object], [Object], [Object], [Object] ],
-    streamable: '0' },
-  { name: 'ストレイテナー',
-    mbid: '',
-    match: '0.529075',
-    url: 'www.last.fm/music/%E3%82%B9%E3%83%88%E3%83%AC%E3%82%A4%E3%83%86%E3%83%8A%E3%83%BC',
-    image: [ [Object], [Object], [Object], [Object], [Object] ],
-    streamable: '0' },
-  { name: 'Nothing\'s Carved In Stone',
-    mbid: '',
-    match: '0.417177',
-    url: 'www.last.fm/music/Nothing%27s+Carved+In+Stone',
-    image: [ [Object], [Object], [Object], [Object], [Object] ],
-    streamable: '0' },
-  { name: '[Champagne]',
-    mbid: '',
-    match: '0.394879',
-    url: 'www.last.fm/music/%5BChampagne%5D',
-    image: [ [Object], [Object], [Object], [Object], [Object] ],
-    streamable: '0' },
-  { name: '10-FEET',
-    mbid: 'e000f4d8-b722-4120-9b5d-0a13d6f39be3',
-    match: '0.376297',
-    url: 'www.last.fm/music/10-FEET',
-    image: [ [Object], [Object], [Object], [Object], [Object] ],
-    streamable: '0' },
-  { name: 'ASIAN KUNG-FU GENERATION',
-    mbid: '14e410f5-97f2-48ba-b1f7-a3a44cbea05c',
-    match: '0.340997',
-    url: 'www.last.fm/music/ASIAN+KUNG-FU+GENERATION',
-    image: [ [Object], [Object], [Object], [Object], [Object] ],
-    streamable: '0' },
-  { name: 'MAN WITH A MISSION',
-    mbid: 'd1c5a553-1fd0-43ca-a66a-da94c9f15570',
-    match: '0.329277',
-    url: 'www.last.fm/music/MAN+WITH+A+MISSION',
-    image: [ [Object], [Object], [Object], [Object], [Object] ],
-    streamable: '0' },
-  { name: 'RADWIMPS',
-    mbid: '6f500293-7396-4903-b4fd-118127d06f9e',
-    match: '0.32335',
-    url: 'www.last.fm/music/RADWIMPS',
-    image: [ [Object], [Object], [Object], [Object], [Object] ],
-    streamable: '0' },
-  { name: 'ACIDMAN',
-    mbid: '245462fb-c007-422a-9b89-88d285e890dd',
-    match: '0.310989',
-    url: 'www.last.fm/music/ACIDMAN',
-    image: [ [Object], [Object], [Object], [Object], [Object] ],
-    streamable: '0' },
-  { name: 'locofrank',
-    mbid: '09907717-b521-444d-847c-3c42c4c591ed',
-    match: '0.305419',
-    url: 'www.last.fm/music/locofrank',
-    image: [ [Object], [Object], [Object], [Object], [Object] ],
-    streamable: '0' } ]
-`
-
 

@@ -6,6 +6,38 @@ clog "============= test.coffee ================="
 
 
 
+server = require "./server.js"
+
+
+# manager = require "./streamManager.js"
+
+
+
+
+# moment = require "moment"
+# id = moment().unix().toString()
+# console.log id
+# console.log  "ellegarden" + id
+
+# newID = "s" + id
+
+# # id = moment().unix()
+# # console.log id
+
+# # console.log id + 1
+
+# arry = []
+# arry['aa'] = {"a":"aa"}
+# console.log arry
+# console.log arry['aa']
+
+# console.log "aaaaaaaaaaaaaaaaaaaaa"
+# arry[newID] = {'aef':'iajefj'}
+# console.log arry
+
+
+
+
 
 # arr = new Array("4", "11", "2", "10", "3", "1")
 # clog arr

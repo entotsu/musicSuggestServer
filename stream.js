@@ -37,7 +37,7 @@
 
   DEFAULT_LIMIT_OF_TOP_TRACK = 25;
 
-  NG_WORDS = ["歌ってみ", "うたってみ", "カラオケ", "カバー", "cover", "コピー", "copy", "ピッチ", "弾いてみ", "ｺﾋﾟｰ", "メドレー", "ﾒﾄﾞﾚｰ", "BGM", "作業用", "Trailer", "トレーラー"];
+  NG_WORDS = ["歌ってみ", "うたってみ", "カラオケ", "ｶﾗｵｹ", "カバー", "ｶﾊﾞｰ", "cover", "Cover", "COVER", "コピー", "ｺﾋﾟｰ", "copy", "Copy", "COPY", "ピッチ", "弾いてみ", "ひいてみ", "メドレー", "ﾒﾄﾞﾚｰ", "BGM", "作業用", "Trailer", "トレーラー", "寄せ集め", "集めてみた"];
 
   Stream = (function() {
     function Stream(artistName, artistId) {

@@ -6,6 +6,28 @@ clog "============= test.coffee ================="
 
 
 
+Stream = require "./stream.js"
+
+getloop = (stream)->
+	setTimeout (=>
+		newTracks = stream.popTracks(10)
+		console.log newTracks
+		getloop stream
+	), stream.firstRequestDelay + (10000 * Math.random())
+
+stream = new Stream "ELLEGARDEN"
+getloop stream
+
+
+
+setTimeout =>
+	stream.stop()
+	setTimeout =>
+		stream = null
+	,1000
+, 1000 * 40
+
+
 # server = require "./server.js"
 
 
@@ -46,27 +68,6 @@ clog "============= test.coffee ================="
 # clog removed
 
 
-
-Stream = require "./stream.js"
-
-getloop = (stream)->
-	setTimeout (=>
-		newTracks = stream.popTracks(10)
-		console.log newTracks
-		getloop stream
-	), stream.firstRequestDelay + (10000 * Math.random())
-
-stream = new Stream "ELLEGARDEN"
-getloop stream
-
-
-
-setTimeout =>
-	stream.stop()
-	setTimeout =>
-		stream = null
-	,1000
-, 1000 * 40
 
 # stream2 = new Stream "A-bee"
 # getloop stream2

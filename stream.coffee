@@ -8,6 +8,7 @@ clog "stream.coffee"
 req = require './request.js'
 moment = require "moment"
 
+YTParser = require './getYouTubeURL.js'
 
 
 #------------------------- TUNING -------------------------------
@@ -225,7 +226,9 @@ class Stream
 	addVideo: ->
 			track = randomPick @uncheckedTracks
 			if track
+
 				keyword = track.artist_name + " " + track.track_name
+
 				req.searchVideo keyword, 1, (videos)=>
 					video = videos[0]
 
@@ -240,24 +243,19 @@ class Stream
 							if title.indexOf(ng_word) isnt -1
 								clog "### BLOCK by NG WORD #{title} #{ng_word}"
 								return false
-
 						#できればここでplaytestをする → 終わったやつから足してく
 						# @uncheckedVideos.push video
-
-						track.youtube_id = id
-
-						#いまはとりあえず playlistに足す
-						@playlist.push track
-						clog "#{@id} s#{@sendNum} p#{@playlist.length} t#{@uncheckedTracks.length}  # added!　　" + id + "  " + title
-
-						#やる？通信的に余裕があればやるか？
-						#アーティストbioをここでリクエストして追加
-						# setTimeout (=>
-						#	appendBio(newTrack)
-						# ), 1000
-
-
-
+						YTParser.getUrlFromId id, (videoURL)=>
+							if videoURL
+								track.url = videoURL
+								#いまはとりあえず playlistに足す
+								@playlist.push track
+								clog "#{@id} s#{@sendNum} p#{@playlist.length} t#{@uncheckedTracks.length}  # added!　　" + id + "  " + title
+								#やる？通信的に余裕があればやるか？
+								#アーティストbioをここでリクエストして追加
+								# setTimeout (=>
+								#	appendBio(newTrack)
+								# ), 1000
 
 #---------------------------------------------------------------
 	

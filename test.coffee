@@ -6,26 +6,77 @@ clog "============= test.coffee ================="
 
 
 
-Stream = require "./stream.js"
-
-getloop = (stream)->
-	setTimeout (=>
-		newTracks = stream.popTracks(10)
-		console.log newTracks
-		getloop stream
-	), stream.firstRequestDelay + (10000 * Math.random())
-
-stream = new Stream "ELLEGARDEN"
-getloop stream
 
 
 
-setTimeout =>
-	stream.stop()
-	setTimeout =>
-		stream = null
-	,1000
-, 1000 * 40
+
+
+
+
+YTParser = require './getYouTubeURL.js'
+
+YTParser.getUrlFromId "Q4MM80ZFlSA", (videoURL)->
+	clog "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+	clog videoURL
+
+
+
+
+
+
+
+
+
+
+
+
+# req = require './request.js'
+# req.searchVideo "ELLEGARDEN I hate it", 4, (videos)->
+	# for video in videos
+		# clog video.snippet.title
+		# clog video.id.videoId
+		# clog video
+
+
+
+
+# Stream = require "./stream.js"
+
+# getloop = (stream)->
+# 	setTimeout (=>
+# 		newTracks = stream.popTracks(10)
+# 		console.log newTracks
+# 		getloop stream
+# 	), stream.firstRequestDelay + (10000 * Math.random())
+
+# stream = new Stream "ELLEGARDEN"
+# getloop stream
+
+
+
+# setTimeout =>
+# 	stream.stop()
+# 	setTimeout =>
+# 		stream = null
+# 	,1000
+# , 1000 * 40
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # server = require "./server.js"

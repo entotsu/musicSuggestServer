@@ -13,11 +13,11 @@ clog "============= test.coffee ================="
 
 
 
-YTParser = require './getYouTubeURL.js'
+# YTParser = require './getYouTubeURL.js'
 
-YTParser.getUrlFromId "Q4MM80ZFlSA", (videoURL)->
-	clog "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-	clog videoURL
+# YTParser.getUrlFromId "Q4MM80ZFlSA", (videoURL)->
+# 	clog "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+# 	clog videoURL
 
 
 

@@ -123,7 +123,7 @@
   get = function(options, callback) {
     return req.get(options, function(error, response, body) {
       if (error) {
-        return clog("error: " + response.statusCode);
+        return clog("error: " + response);
       } else if (response.statusCode === 200) {
         return callback(body);
       }

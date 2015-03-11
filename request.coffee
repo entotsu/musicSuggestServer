@@ -128,7 +128,7 @@ get = (options, callback) ->
 	# clog "↑ wait ..."
 	req.get options, (error, response, body) ->
 		if error
-			clog "error: " + response.statusCode
+			clog "error: " + response
 		else if response.statusCode is 200
 			callback body
 

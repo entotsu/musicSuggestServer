@@ -9,4 +9,5 @@
 
 ## server
 * git pull
-* forever start server.js
+* forever listで起動時間の確認
+* (forever start server.js)

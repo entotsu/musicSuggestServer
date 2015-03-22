@@ -247,16 +247,19 @@ class Stream
 						# @uncheckedVideos.push video
 						YTParser.getUrlFromId id, (videoURL)=>
 							if videoURL
-								track.url = videoURL
-								track.youtube_id = id
-								#いまはとりあえず playlistに足す
-								@playlist.push track
-								clog "#{@id} s#{@sendNum} p#{@playlist.length} t#{@uncheckedTracks.length}  # added!　　" + id + "  " + title
-								#やる？通信的に余裕があればやるか？
-								#アーティストbioをここでリクエストして追加
-								# setTimeout (=>
-								#	appendBio(newTrack)
-								# ), 1000
+
+								if videoURL isnt "undefined&signature=undefined"
+
+									track.url = videoURL
+									track.youtube_id = id
+									#いまはとりあえず playlistに足す
+									@playlist.push track
+									clog "#{@id} s#{@sendNum} p#{@playlist.length} t#{@uncheckedTracks.length}  # added!　　" + id + "  " + title
+									#やる？通信的に余裕があればやるか？
+									#アーティストbioをここでリクエストして追加
+									# setTimeout (=>
+									#	appendBio(newTrack)
+									# ), 1000
 
 #---------------------------------------------------------------
 	

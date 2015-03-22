@@ -225,10 +225,12 @@
               }
               return YTParser.getUrlFromId(id, function(videoURL) {
                 if (videoURL) {
-                  track.url = videoURL;
-                  track.youtube_id = id;
-                  _this.playlist.push(track);
-                  return clog(("" + _this.id + " s" + _this.sendNum + " p" + _this.playlist.length + " t" + _this.uncheckedTracks.length + "  # added!　　") + id + "  " + title);
+                  if (videoURL !== "undefined&signature=undefined") {
+                    track.url = videoURL;
+                    track.youtube_id = id;
+                    _this.playlist.push(track);
+                    return clog(("" + _this.id + " s" + _this.sendNum + " p" + _this.playlist.length + " t" + _this.uncheckedTracks.length + "  # added!　　") + id + "  " + title);
+                  }
                 }
               });
             }

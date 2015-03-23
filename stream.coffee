@@ -238,7 +238,15 @@ class Stream
 						title = video.snippet.title
 						id = video.id.videoId
 
+
+
 						#タイトルでフィルタリング
+						if title.indexOf(track.artist_name) is -1
+							return false
+						#タイトルでフィルタリング
+						if title.indexOf(track.track_name) is -1
+							return false
+						# NGワードでフィルタリング
 						for ng_word in NG_WORDS
 							if title.indexOf(ng_word) isnt -1
 								clog "### BLOCK by NG WORD #{title} #{ng_word}"

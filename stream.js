@@ -216,6 +216,12 @@
             } else {
               title = video.snippet.title;
               id = video.id.videoId;
+              if (title.indexOf(track.artist_name) === -1) {
+                return false;
+              }
+              if (title.indexOf(track.track_name) === -1) {
+                return false;
+              }
               for (_i = 0, _len = NG_WORDS.length; _i < _len; _i++) {
                 ng_word = NG_WORDS[_i];
                 if (title.indexOf(ng_word) !== -1) {

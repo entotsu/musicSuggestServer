@@ -154,7 +154,7 @@
           var a, newArtist, _i, _len;
           if (!artists) {
             console.error("similarartists is NOT FOUND!!! in last.fm");
-            _this.isError = true;
+            return _this.isError = true;
           } else {
             for (_i = 0, _len = artists.length; _i < _len; _i++) {
               a = artists[_i];
@@ -165,9 +165,9 @@
               _this.similarArtists.push(newArtist);
             }
             clog("+++++++++++++++++ " + _this.similarArtists.length + " artists is added!");
-          }
-          if (callback) {
-            return callback();
+            if (callback) {
+              return callback();
+            }
           }
         };
       })(this));

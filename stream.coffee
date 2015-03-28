@@ -203,7 +203,7 @@ class Stream
 					clog newArtist.name + newArtist.id
 					@similarArtists.push newArtist
 				clog "+++++++++++++++++ #{@similarArtists.length} artists is added!"
-			if callback then callback()
+				if callback then callback()
 
 
 	addTracks: (limit, callback)->

@@ -113,6 +113,7 @@ lastfmGet = (params, callback) ->
 	options =
 		url: LF_URL + qs.stringify params
 		json: true
+	console.log options.url
 	get options, callback
 
 

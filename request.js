@@ -108,6 +108,7 @@
       url: LF_URL + qs.stringify(params),
       json: true
     };
+    console.log(options.url);
     return get(options, callback);
   };
 

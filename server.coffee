@@ -36,7 +36,6 @@ onAccess = (req, res) ->
 			switch p.method
 
 				when "start"#  artist_name  artist_id
-
 					unless p.artist_name
 						returnError res, ERROR['no_artist_name']
 					else

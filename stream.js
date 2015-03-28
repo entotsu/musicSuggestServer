@@ -160,8 +160,8 @@
               newArtist = {};
               newArtist.name = a.name;
               newArtist.id = a.mbid;
-              _this.similarArtists.push(newArtist);
               clog(newArtist.name);
+              _this.similarArtists.push(newArtist);
             }
             clog("+++++++++++++++++ " + _this.similarArtists.length + " artists is added!");
           }

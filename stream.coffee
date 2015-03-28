@@ -199,8 +199,8 @@ class Stream
 					newArtist = {}
 					newArtist.name = a.name
 					newArtist.id = a.mbid
-					@similarArtists.push newArtist
 					clog newArtist.name
+					@similarArtists.push newArtist
 				clog "+++++++++++++++++ #{@similarArtists.length} artists is added!"
 			if callback then callback()
 

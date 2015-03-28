@@ -51,6 +51,8 @@
       } else if (!body.similarartists.artist) {
         console.error("body.similarartists.artist is undefined!");
         return console.error(body);
+      } else if (body.similarartists["#text"]) {
+        return callback(null);
       } else {
         return callback(body.similarartists.artist);
       }

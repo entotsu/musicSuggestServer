@@ -53,6 +53,9 @@ getSimilarArtist = (artistName, artistId, limit, callback)->
 		else unless body.similarartists.artist
 			console.error "body.similarartists.artist is undefined!"
 			console.error body
+		else if body.similarartists["#text"]
+			# console.error "similarartists is NOT FOUND!!! in last.fm"
+			callback null
 		else
 			callback body.similarartists.artist
 

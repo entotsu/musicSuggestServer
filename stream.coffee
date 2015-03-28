@@ -105,6 +105,7 @@ class Stream
 
 		@isExhaustedArtists = false
 		@isStop = false
+		@isError = false
 
 		@timeoutTimer = null
 
@@ -190,9 +191,9 @@ class Stream
 	addArtists: (limit, callback)->
 		# clog "get similar artists #{limit} ..."
 		req.getSimilarArtist @artistName, @artistId, limit, (artists)=>
-			unless artists
-				console.error "artists is undifined!"
-				process.exit()#debug!
+			unless artists				
+				console.error "similarartists is NOT FOUND!!! in last.fm"
+				@isError = true
 			else
 				# @similarArtists = artists
 				for a in artists

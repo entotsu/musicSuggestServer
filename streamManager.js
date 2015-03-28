@@ -27,7 +27,7 @@
   };
 
   getTracks = function(id, limit) {
-    var json, stream, tracks;
+    var isError, json, stream, tracks;
     console.log("getTracks");
     stream = streamList[id];
     if (!stream) {
@@ -37,8 +37,10 @@
     } else {
       setStopTimeout(stream);
       tracks = stream.popTracks(limit);
+      isError = stream.isError;
       json = {
-        tracks: tracks
+        tracks: tracks,
+        isError: isError
       };
       return json;
     }

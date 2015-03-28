@@ -63,6 +63,7 @@
       this.videoLoopTimer = null;
       this.isExhaustedArtists = false;
       this.isStop = false;
+      this.isError = false;
       this.timeoutTimer = null;
     }
 
@@ -152,8 +153,8 @@
         return function(artists) {
           var a, newArtist, _i, _len;
           if (!artists) {
-            console.error("artists is undifined!");
-            process.exit();
+            console.error("similarartists is NOT FOUND!!! in last.fm");
+            _this.isError = true;
           } else {
             for (_i = 0, _len = artists.length; _i < _len; _i++) {
               a = artists[_i];

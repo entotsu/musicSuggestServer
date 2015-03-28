@@ -31,7 +31,11 @@ getTracks = (id, limit)->
 	else
 		setStopTimeout stream
 		tracks = stream.popTracks(limit)
-		json = {tracks:tracks}
+		isError = stream.isError
+		json = {
+			tracks:tracks
+			isError:isError
+		}
 		return json
 
 

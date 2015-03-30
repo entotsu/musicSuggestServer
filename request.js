@@ -10,7 +10,7 @@
 
   LF_URL = "http://ws.audioscrobbler.com/2.0/?";
 
-  LF_KEY = "9cdfb5f61ca81f6a17b4df1d82f18fbb";
+  LF_KEY = "8ebb90fd821ad18e4a9c2b53c915e2f2";
 
   YT_URL = "https://www.googleapis.com/youtube/v3/search/?";
 

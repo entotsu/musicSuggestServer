@@ -6,8 +6,8 @@ clog "request.coffee"
 LF_URL = "http://ws.audioscrobbler.com/2.0/?"
 # LF_KEY = "3119649624fae2e9531bc4639a08cba8"
 # LF_KEY = "83412cee9bc5e70bbe0b36b669ac165e"
-LF_KEY = "9cdfb5f61ca81f6a17b4df1d82f18fbb"
-
+# LF_KEY = "9cdfb5f61ca81f6a17b4df1d82f18fbb"
+LF_KEY = "8ebb90fd821ad18e4a9c2b53c915e2f2"
 
 # YouTube
 YT_URL = "https://www.googleapis.com/youtube/v3/search/?"
